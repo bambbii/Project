@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sist.com.model.DiaryBean">
+
+
+	<insert id="joinMember" parameterType="diaryMember">
+		<selectKey keyProperty="no" order="BEFORE" resultType="int">
+			SELECT PROMEMBER_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO PROMEMBER VALUES(#{no},#{name},#{id},#{password},#{gender})
+	</insert>
+
+	<select id="idCheck" parameterType="String" resultType="String">
+		SELECT ID FROM PROMEMBER WHERE ID=#{VALUE}
+	</select>
+	
+	<select id="passCheck" parameterType="String" resultType="diaryMember">
+		SELECT NO, NAME, ID, PASSWORD, GENDER FROM PROMEMBER WHERE ID=#{VALUE}
+	</select>
+	
+	<select id="insertData" parameterType="bean">
+		INSERT INTO datediary VALUES(datediary_seq.nextval,#{title},#{contents},#{feeling},#{weather},#{fileName},#{memberno},#{datediary})
+	</select>
+	
+	<sql id="selectListDiarySQL">
+		select rm,NO, TITLE, CONTENTS, FEELING, WEATHER, FILENAME, MEMBERNO, TO_CHAR(DATEDIARY,'YYYY/MM/DD')DATEDIARY  
+		from(   
+		select rownum rm,NO, TITLE, CONTENTS, FEELING, WEATHER, FILENAME, MEMBERNO, DATEDIARY  
+		from(   
+		select NO, TITLE, CONTENTS, FEELING, WEATHER, FILENAME, MEMBERNO, DATEDIARY    
+		from datediary 
+	</sql>
+	
+	<select id="selectListDiary" resultType="bean" parameterType="int">
+		<include refid="selectListDiarySQL"></include>
+		where memberno=#{value} 
+		order by datediary desc))
+   </select>
+	
+	<select id="selectListDiaryInfo" resultType="bean" parameterType="java.util.HashMap">
+		SELECT NO, TITLE, CONTENTS, FEELING, WEATHER, FILENAME, MEMBERNO, TO_CHAR(DATEDIARY,'YYYY/MM/DD')DATEDIARY
+		FROM DATEDIARY WHERE NO=#{VALUE}
+	</select>	
+
+	<update id="updateData" parameterType="bean">
+		UPDATE DATEDIARY SET title=#{title},contents=#{contents},feeling=#{feeling},weather=#{weather},fileName=#{fileName},datediary=#{datediary}
+		WHERE no=#{no}
+	</update>
+	
+	<delete id="deleteDiaryInfo" parameterType="int">
+		DELETE FROM DATEDIARY WHERE NO=#{VALUE}
+	</delete>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
